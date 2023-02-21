@@ -221,9 +221,17 @@ Move Resource Viewer is a tool to query [BCS](https://github.com/diem/bcs) resou
 Query the user's store contract balance:
 
 ```bash
-dove view "gkQ5K6EnLRgZkwozG8GiBAEnJyM6FxzbSaSmVhKJ2w8FcK7ih::Storage::Store<u64>" --api "http://127.0.0.1:9944"
-dove view "Alice::Storage::Sum" --api "http://127.0.0.1:9944"
-dove view "0x1::Account::Balance<0x1::PONT::T>" --api "http://127.0.0.1:9944"
+dove view "gkQ5K6EnLRgZkwozG8GiBAEnJyM6FxzbSaSmVhKJ2w8FcK7ih::Storage::Store<u64>" --api "http://127.0.0.1:9933"
+dove view "Alice::Storage::Sum" --api "http://127.0.0.1:9933"
+dove view "0x1::Account::Balance<0x1::PONT::T>" --api "http://127.0.0.1:9933"
+dove call 'gkQ5K6EnLRgZkwozG8GiBAEnJyM6FxzbSaSmVhKJ2w8FcK7ih::ScriptBook::store_sum_func'  --args 3 9 --url "http://127.0.0.1:9933"
+dove call 'gkQ5K6EnLRgZkwozG8GiBAEnJyM6FxzbSaSmVhKJ2w8FcK7ih::ScriptBook::store_sum_func<u64,u64>(2,3)'  --args gkQ5K6EnLRgZkwozG8GiBAEnJyM6FxzbSaSmVhKJ2w8FcK7ih 3 9 --url "http://127.0.0.1:9933"
+dove call 'gkQ5K6EnLRgZkwozG8GiBAEnJyM6FxzbSaSmVhKJ2w8FcK7ih::ScriptBook::sum_func'  --args 3 9 
+dove call 'gkQ5K6EnLRgZkwozG8GiBAEnJyM6FxzbSaSmVhKJ2w8FcK7ih::ScriptBook::test2<u64,u64>(2,3)'  --args 3 9 --url "http://127.0.0.1:9933"
+dove call 'gkQ5K6EnLRgZkwozG8GiBAEnJyM6FxzbSaSmVhKJ2w8FcK7ih::ScriptBook::test2'  --args 3 9 
+dove run 'gkQ5K6EnLRgZkwozG8GiBAEnJyM6FxzbSaSmVhKJ2w8FcK7ih::ScriptBook::test2'  --args 3 9  
+dove call 'gkQ5K6EnLRgZkwozG8GiBAEnJyM6FxzbSaSmVhKJ2w8FcK7ih::ScriptBook::test' 
+dove call 'gkQ5K6EnLRgZkwozG8GiBAEnJyM6FxzbSaSmVhKJ2w8FcK7ih::ScriptBook::sum_funct'  --args 3 9  --type u8
 ```
 
 ### Input parameters

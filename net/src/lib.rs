@@ -40,6 +40,20 @@ pub trait Net {
         tag: &StructTag,
         height: &Option<Block>,
     ) -> Result<Option<BytesForBlock>>;
+ fn encode_submission(
+        &self,
+        addr:&str,
+        module: &str,
+        function: &str,
+        arguments: &[&str],
+        type_parameters: &[&str],
+        height: &Option<Block>,
+    ) -> Result<Option<BytesForBlock>>;
+ fn get_module_abis(
+        &self,
+        module_id: &ModuleId,
+        height: &Option<Block>,
+    ) -> Result<Option<BytesForBlock>> ;
 }
 
 pub struct NetView {
