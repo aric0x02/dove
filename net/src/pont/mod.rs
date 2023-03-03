@@ -114,6 +114,56 @@ impl Net for PontNet {
             Ok(None)
         }
     }
+fn get_resources(
+        &self,
+        address: &AccountAddress,
+        tag: &StructTag,
+        height: &Option<Block>,
+    ) -> Result<Option<BytesForBlock>> {
+        let req = Request {
+            id: 1,
+            jsonrpc: "2.0",
+            method: "mvm_getResources",
+            params: vec![
+                address_to_ss58(address),
+                format!("0x{}", hex::encode(bcs::to_bytes(&tag)?)),
+            ],
+        };
+        let mut headers = reqwest::header::HeaderMap::new();
+        headers.insert(
+            "Content-Type",
+            reqwest::header::HeaderValue::from_static("application/json"),
+        );
+        let response = reqwest::blocking::Client::new()
+            .post(&self.api)
+            .headers(headers)
+            .json(&req)
+            .send()?;
+        if response.status() != 200 {
+            bail!(
+                "Failed to get resource :{:?} {:?}. Error:{}",
+                &address,
+                &tag,
+                response.status()
+            );
+        }
+
+        let resp = response.json::<Response>()?;
+        if let Some(err) = resp.error {
+            bail!("{:?}", err);
+        }
+        if let Some(result) = resp.result {
+            println!("result=={:?}==={:?}", &result,std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap());
+
+            let result = hex::decode(&result[2..])?;
+            Ok(Some(BytesForBlock(
+                result,
+                height.clone().unwrap_or_default(),
+            )))
+        } else {
+            Ok(None)
+        }
+    }
     fn get_module_abi(
         &self,
         module_id: &ModuleId,
@@ -159,7 +209,57 @@ impl Net for PontNet {
             Ok(None)
         }
     }
+    fn get_module_abis(
+        &self,
+        module_id: &ModuleId,
+        height: &Option<Block>,
+    ) -> Result<Option<BytesForBlock>> {
+        let req = Request {
+            id: 1,
+            jsonrpc: "2.0",
+            method: "mvm_getModuleABIs",
+            params: vec![format!("0x{}", hex::encode(bcs::to_bytes(module_id)?))],
+        };
+        println!("================0x{}",hex::encode(bcs::to_bytes(module_id)?));
+        let mut headers = reqwest::header::HeaderMap::new();
+        headers.insert(
+            "Content-Type",
+            reqwest::header::HeaderValue::from_static("application/json"),
+        );
+        let response = reqwest::blocking::Client::new()
+            .post(&self.api)
+            .headers(headers)
+            .json(&req)
+            .send()?;
 
+        if response.status() != 200 {
+            bail!(
+                "Failed to get module abis:{}. Error:{}",
+                module_id,
+                response.status()
+            );
+        }
+        // println!("{:?}", response.json::<Response>());
+        let resp = response.json::<Response>()?;
+        if let Some(err) = resp.error {
+            bail!("{:?}", err);
+        }
+        if let Some(result) = resp.result {
+            println!("result=={:?}==={:?}", &result,std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap());
+            let s=std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap().to_string();//.replace("\"","");
+            println!("s====={:?}", &s);
+            let res1:MoveModuleBytecode = serde_json::from_str(&s).unwrap();
+            println!("res1====={:?}", res1);
+            let res:MoveModuleBytecode = serde_json::from_slice(&hex::decode(&result[2..]).unwrap()).unwrap();
+            println!("res====={:?}", res);
+            Ok(Some(BytesForBlock(
+                result.into(),
+                height.clone().unwrap_or_default(),
+            )))
+        } else {
+            Ok(None)
+        }
+    }
     fn encode_submission(
         &self,
         addr:&str,
@@ -220,58 +320,8 @@ arguments.iter().map(|a| format!("0x{}", hex::encode(a.as_bytes()))).collect(),
         }
     }
 
-    fn get_module_abis(
-        &self,
-        module_id: &ModuleId,
-        height: &Option<Block>,
-    ) -> Result<Option<BytesForBlock>> {
-        let req = Request {
-            id: 1,
-            jsonrpc: "2.0",
-            method: "mvm_getModuleABIs",
-            params: vec![format!("0x{}", hex::encode(bcs::to_bytes(module_id)?))],
-        };
-        println!("================0x{}",hex::encode(bcs::to_bytes(module_id)?));
-        let mut headers = reqwest::header::HeaderMap::new();
-        headers.insert(
-            "Content-Type",
-            reqwest::header::HeaderValue::from_static("application/json"),
-        );
-        let response = reqwest::blocking::Client::new()
-            .post(&self.api)
-            .headers(headers)
-            .json(&req)
-            .send()?;
-
-        if response.status() != 200 {
-            bail!(
-                "Failed to get module abis:{}. Error:{}",
-                module_id,
-                response.status()
-            );
-        }
-        // println!("{:?}", response.json::<Response>());
-        let resp = response.json::<Response>()?;
-        if let Some(err) = resp.error {
-            bail!("{:?}", err);
-        }
-        if let Some(result) = resp.result {
-            println!("result=={:?}==={:?}", &result,std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap());
-            let s=std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap().to_string();//.replace("\"","");
-            println!("s====={:?}", &s);
-            let res1:MoveModuleBytecode = serde_json::from_str(&s).unwrap();
-            println!("res1====={:?}", res1);
-            let res:MoveModuleBytecode = serde_json::from_slice(&hex::decode(&result[2..]).unwrap()).unwrap();
-            println!("res====={:?}", res);
-            Ok(Some(BytesForBlock(
-                result.into(),
-                height.clone().unwrap_or_default(),
-            )))
-        } else {
-            Ok(None)
-        }
-    }
-
+    
+    
 }
 
 #[derive(Serialize)]
@@ -405,8 +455,8 @@ mod tests {
                 &addr,
                 &StructTag {
                     address: addr,
-                    module: Identifier::new("Store").unwrap(),
-                    name: Identifier::new("U64").unwrap(),
+                    module: Identifier::new("Storage").unwrap(),
+                    name: Identifier::new("Sum").unwrap(),
                     type_params: vec![],
                 },
                 &None,
@@ -415,7 +465,29 @@ mod tests {
             .unwrap();
         assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
     }
+    // #[ignore]
+    #[test]
+    fn test_get_resourc2es() {
+        let api = PontNet {
+            api: "http://localhost:9933".to_string(),
+        };
 
+        let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
+        let module = api
+            .get_resources(
+                &addr,
+                &StructTag {
+                    address: addr,
+                    module: Identifier::new("Storage").unwrap(),
+                    name: Identifier::new("Sum").unwrap(),
+                    type_params: vec![],
+                },
+                &None,
+            )
+            .unwrap()
+            .unwrap();
+        assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+    }
     // #[ignore]
     #[test]
     fn test_get_module_abi() {
