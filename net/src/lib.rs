@@ -46,6 +46,18 @@ fn get_resources(
         tag: &StructTag,
         height: &Option<Block>,
     ) -> Result<Option<BytesForBlock>> ;
+fn get_resources2(
+        &self,
+        address: &AccountAddress,
+        tag: &StructTag,
+        height: &Option<Block>,
+    ) -> Result<Option<BytesForBlock>> ;
+fn get_resources3(
+        &self,
+        address: &AccountAddress,
+        tag: &str,
+        height: &Option<Block>,
+    ) -> Result<Option<BytesForBlock>> ;
 fn get_module_abi(
         &self,
         module_id: &ModuleId,

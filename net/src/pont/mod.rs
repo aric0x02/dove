@@ -164,6 +164,106 @@ fn get_resources(
             Ok(None)
         }
     }
+    fn get_resources2(
+        &self,
+        address: &AccountAddress,
+        tag: &StructTag,
+        height: &Option<Block>,
+    ) -> Result<Option<BytesForBlock>> {
+        let req = Request {
+            id: 1,
+            jsonrpc: "2.0",
+            method: "mvm_getResources2",
+            params: vec![
+                address_to_ss58(address),
+                format!("0x{}", hex::encode(bcs::to_bytes(&tag)?)),
+            ],
+        };
+        let mut headers = reqwest::header::HeaderMap::new();
+        headers.insert(
+            "Content-Type",
+            reqwest::header::HeaderValue::from_static("application/json"),
+        );
+        let response = reqwest::blocking::Client::new()
+            .post(&self.api)
+            .headers(headers)
+            .json(&req)
+            .send()?;
+        if response.status() != 200 {
+            bail!(
+                "Failed to get resource :{:?} {:?}. Error:{}",
+                &address,
+                &tag,
+                response.status()
+            );
+        }
+
+        let resp = response.json::<Response>()?;
+        if let Some(err) = resp.error {
+            bail!("{:?}", err);
+        }
+        if let Some(result) = resp.result {
+            println!("result=={:?}==={:?}", &result,std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap());
+
+            let result = hex::decode(&result[2..])?;
+            Ok(Some(BytesForBlock(
+                result,
+                height.clone().unwrap_or_default(),
+            )))
+        } else {
+            Ok(None)
+        }
+    }
+    fn get_resources3(
+        &self,
+        address: &AccountAddress,
+        tag: &str,
+        height: &Option<Block>,
+    ) -> Result<Option<BytesForBlock>> {
+        let req = Request {
+            id: 1,
+            jsonrpc: "2.0",
+            method: "mvm_getResources3",
+            params: vec![
+                address_to_ss58(address),
+                format!("0x{}", hex::encode(tag.as_bytes())),
+            ],
+        };
+        let mut headers = reqwest::header::HeaderMap::new();
+        headers.insert(
+            "Content-Type",
+            reqwest::header::HeaderValue::from_static("application/json"),
+        );
+        let response = reqwest::blocking::Client::new()
+            .post(&self.api)
+            .headers(headers)
+            .json(&req)
+            .send()?;
+        if response.status() != 200 {
+            bail!(
+                "Failed to get resource :{:?} {:?}. Error:{}",
+                &address,
+                &tag,
+                response.status()
+            );
+        }
+
+        let resp = response.json::<Response>()?;
+        if let Some(err) = resp.error {
+            bail!("{:?}", err);
+        }
+        if let Some(result) = resp.result {
+            println!("result=={:?}==={:?}", &result,std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap());
+
+            let result = hex::decode(&result[2..])?;
+            Ok(Some(BytesForBlock(
+                result,
+                height.clone().unwrap_or_default(),
+            )))
+        } else {
+            Ok(None)
+        }
+    }
     fn get_module_abi(
         &self,
         module_id: &ModuleId,
@@ -467,7 +567,7 @@ mod tests {
     }
     // #[ignore]
     #[test]
-    fn test_get_resourc2es() {
+    fn test_get_resources1() {
         let api = PontNet {
             api: "http://localhost:9933".to_string(),
         };
@@ -482,6 +582,47 @@ mod tests {
                     name: Identifier::new("Sum").unwrap(),
                     type_params: vec![],
                 },
+                &None,
+            )
+            .unwrap()
+            .unwrap();
+        assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+    }
+    // #[ignore]
+    #[test]
+    fn test_get_resources2() {
+        let api = PontNet {
+            api: "http://localhost:9933".to_string(),
+        };
+
+        let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
+        let module = api
+            .get_resources2(
+                &addr,
+                &StructTag {
+                    address: addr,
+                    module: Identifier::new("Storage").unwrap(),
+                    name: Identifier::new("Sum").unwrap(),
+                    type_params: vec![],
+                },
+                &None,
+            )
+            .unwrap()
+            .unwrap();
+        assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+    }
+    // #[ignore]
+    #[test]
+    fn test_get_resources3() {
+        let api = PontNet {
+            api: "http://localhost:9933".to_string(),
+        };
+
+        let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
+        let module = api
+            .get_resources3(
+                &addr,
+"0xD43593C715FDD31C61141ABD04A99FD6822C8558854CCDE39A5684E7A56DA27D::Storage::Sum",
                 &None,
             )
             .unwrap()
