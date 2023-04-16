@@ -834,6 +834,7 @@ dependencies = [
  "move-resource-viewer",
  "move-stdlib",
  "move-symbol-pool",
+ "move-table-extension",
  "move-vm-runtime",
  "move-vm-types",
  "net",

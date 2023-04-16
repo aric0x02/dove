@@ -102,6 +102,7 @@ pub fn all_natives() -> NativeFunctionTable {
     move_stdlib::natives::all_natives(CORE_CODE_ADDRESS)
         .into_iter()
         .chain(pontem_natives(CORE_CODE_ADDRESS))
+        .chain(move_table_extension::table_natives(CORE_CODE_ADDRESS))
         .collect()
 }
 
