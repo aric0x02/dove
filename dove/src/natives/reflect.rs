@@ -4,11 +4,10 @@ use move_vm_runtime::native_functions::NativeContext;
 use move_vm_types::{
     loaded_data::runtime_types::Type,
     natives::function::{native_gas, NativeResult},
-
-    values::{Value,Struct},
+    values::{Value, Struct},
 };
 use smallvec::smallvec;
-use std::{collections::VecDeque,vec, vec::Vec};
+use std::{collections::VecDeque, vec, vec::Vec};
 use crate::natives::PontNativeCostIndex;
 
 const INVALID_TYPE_PARAM: u64 = 1;

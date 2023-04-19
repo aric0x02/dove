@@ -7,12 +7,12 @@ use move_core_types::account_address::AccountAddress;
 
 use lang::ss58::address_to_ss58;
 use crate::{Net, BytesForBlock};
-mod move_types;
+mod abi;
 mod address;
 mod bytecode;
+pub mod move_types;
 mod wrappers;
-mod abi;
-use abi::ModuleAbi;
+// use abi::ModuleAbi;
 use move_types::MoveModuleBytecode;
 pub type Block = String;
 
@@ -114,7 +114,7 @@ impl Net for PontNet {
             Ok(None)
         }
     }
-fn get_resources(
+    fn get_resources(
         &self,
         address: &AccountAddress,
         tag: &StructTag,
@@ -153,7 +153,11 @@ fn get_resources(
             bail!("{:?}", err);
         }
         if let Some(result) = resp.result {
-            println!("result=={:?}==={:?}", &result,std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap());
+            println!(
+                "result=={:?}==={:?}",
+                &result,
+                std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap()
+            );
 
             let result = hex::decode(&result[2..])?;
             Ok(Some(BytesForBlock(
@@ -203,7 +207,11 @@ fn get_resources(
             bail!("{:?}", err);
         }
         if let Some(result) = resp.result {
-            println!("result=={:?}==={:?}", &result,std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap());
+            println!(
+                "result=={:?}==={:?}",
+                &result,
+                std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap()
+            );
 
             let result = hex::decode(&result[2..])?;
             Ok(Some(BytesForBlock(
@@ -253,7 +261,11 @@ fn get_resources(
             bail!("{:?}", err);
         }
         if let Some(result) = resp.result {
-            println!("result=={:?}==={:?}", &result,std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap());
+            println!(
+                "result=={:?}==={:?}",
+                &result,
+                std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap()
+            );
 
             let result = hex::decode(&result[2..])?;
             Ok(Some(BytesForBlock(
@@ -275,7 +287,10 @@ fn get_resources(
             method: "mvm_getModuleABI",
             params: vec![format!("0x{}", hex::encode(bcs::to_bytes(module_id)?))],
         };
-        println!("================0x{}",hex::encode(bcs::to_bytes(module_id)?));
+        println!(
+            "================0x{}",
+            hex::encode(bcs::to_bytes(module_id)?)
+        );
         let mut headers = reqwest::header::HeaderMap::new();
         headers.insert(
             "Content-Type",
@@ -320,7 +335,10 @@ fn get_resources(
             method: "mvm_getModuleABIs",
             params: vec![format!("0x{}", hex::encode(bcs::to_bytes(module_id)?))],
         };
-        println!("================0x{}",hex::encode(bcs::to_bytes(module_id)?));
+        println!(
+            "================0x{}",
+            hex::encode(bcs::to_bytes(module_id)?)
+        );
         let mut headers = reqwest::header::HeaderMap::new();
         headers.insert(
             "Content-Type",
@@ -345,12 +363,19 @@ fn get_resources(
             bail!("{:?}", err);
         }
         if let Some(result) = resp.result {
-            println!("result=={:?}==={:?}", &result,std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap());
-            let s=std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap().to_string();//.replace("\"","");
+            println!(
+                "result=={:?}==={:?}",
+                &result,
+                std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap()
+            );
+            let s = std::str::from_utf8(&hex::decode(&result[2..]).unwrap())
+                .unwrap()
+                .to_string(); //.replace("\"","");
             println!("s====={:?}", &s);
-            let res1:MoveModuleBytecode = serde_json::from_str(&s).unwrap();
+            let res1: MoveModuleBytecode = serde_json::from_str(&s).unwrap();
             println!("res1====={:?}", res1);
-            let res:MoveModuleBytecode = serde_json::from_slice(&hex::decode(&result[2..]).unwrap()).unwrap();
+            let res: MoveModuleBytecode =
+                serde_json::from_slice(&hex::decode(&result[2..]).unwrap()).unwrap();
             println!("res====={:?}", res);
             Ok(Some(BytesForBlock(
                 result.into(),
@@ -362,7 +387,7 @@ fn get_resources(
     }
     fn encode_submission(
         &self,
-        addr:&str,
+        addr: &str,
         module: &str,
         function: &str,
         arguments: &[&str],
@@ -375,12 +400,18 @@ fn get_resources(
             method: "mvm_encodeSubmission",
             params: vec![
                 vec![
-                 format!("0x{}", hex::encode(addr.as_bytes())),
-                format!("0x{}", hex::encode(module.as_bytes())),
-                format!("0x{}", hex::encode(function.as_bytes()))
+                    format!("0x{}", hex::encode(addr.as_bytes())),
+                    format!("0x{}", hex::encode(module.as_bytes())),
+                    format!("0x{}", hex::encode(function.as_bytes())),
                 ],
-arguments.iter().map(|a| format!("0x{}", hex::encode(a.as_bytes()))).collect(),
-               type_parameters.iter().map(|a| format!("0x{}", hex::encode(a.as_bytes()))).collect()
+                arguments
+                    .iter()
+                    .map(|a| format!("0x{}", hex::encode(a.as_bytes())))
+                    .collect(),
+                type_parameters
+                    .iter()
+                    .map(|a| format!("0x{}", hex::encode(a.as_bytes())))
+                    .collect(),
             ],
         };
         let mut headers = reqwest::header::HeaderMap::new();
@@ -398,9 +429,9 @@ arguments.iter().map(|a| format!("0x{}", hex::encode(a.as_bytes()))).collect(),
                 "Failed to get resource :{:?} {:?}.{:?} {:?}.{:?} . Error:{}",
                 addr,
                 module,
-    function,
-               arguments,
-    type_parameters,
+                function,
+                arguments,
+                type_parameters,
                 response.status()
             );
         }
@@ -419,9 +450,6 @@ arguments.iter().map(|a| format!("0x{}", hex::encode(a.as_bytes()))).collect(),
             Ok(None)
         }
     }
-
-    
-    
 }
 
 #[derive(Serialize)]
@@ -511,8 +539,6 @@ mod tests {
         );
     }
 
-   
-
     #[test]
     fn test_get_module_accound_id() {
         let api = PontNet {
@@ -521,14 +547,20 @@ mod tests {
         let module = api
             .get_module(
                 &ModuleId::new(
-                    AccountAddress::from_hex_literal("0xD43593C715FDD31C61141ABD04A99FD6822C8558854CCDE39A5684E7A56DA27D").unwrap(),
+                    AccountAddress::from_hex_literal(
+                        "0xD43593C715FDD31C61141ABD04A99FD6822C8558854CCDE39A5684E7A56DA27D",
+                    )
+                    .unwrap(),
                     Identifier::new("ScriptBook").unwrap(),
                 ),
                 &None,
             )
             .unwrap()
             .unwrap();
-        println!("module={:?}",MoveModuleBytecode::new(module.0.clone()).try_parse_abi());
+        println!(
+            "module={:?}",
+            MoveModuleBytecode::new(module.0.clone()).try_parse_abi()
+        );
         assert_eq!(
             [
                 161, 28, 235, 11, 2, 0, 0, 0, 6, 1, 0, 2, 3, 2, 10, 5, 12, 3, 7, 15, 23, 8, 38,
@@ -638,16 +670,19 @@ mod tests {
         let module = api
             .get_module_abi(
                 &ModuleId::new(
-                    AccountAddress::from_hex_literal("0xD43593C715FDD31C61141ABD04A99FD6822C8558854CCDE39A5684E7A56DA27D").unwrap(),
+                    AccountAddress::from_hex_literal(
+                        "0xD43593C715FDD31C61141ABD04A99FD6822C8558854CCDE39A5684E7A56DA27D",
+                    )
+                    .unwrap(),
                     Identifier::new("ScriptBook").unwrap(),
                 ),
                 &None,
             )
             .unwrap()
             .unwrap();
-            if let Ok(module_abi) = bcs::from_bytes::<ModuleAbi>(&module.0) {
-                        println!("module_abi={:?}",module_abi);
-            }
+        if let Ok(module_abi) = bcs::from_bytes::<ModuleAbi>(&module.0) {
+            println!("module_abi={:?}", module_abi);
+        }
         assert_eq!(
             [
                 161, 28, 235, 11, 2, 0, 0, 0, 6, 1, 0, 2, 3, 2, 10, 5, 12, 3, 7, 15, 23, 8, 38,
@@ -666,64 +701,64 @@ mod tests {
         let api = PontNet {
             api: "http://localhost:9933".to_string(),
         };
-println!("module={:?}",1);
+        println!("module={:?}", 1);
         // let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
         let module = api
             .encode_submission(
                 "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
                 "ScriptBook",
-                 "test",
+                "test",
                 &[],
                 &[],
                 &None,
             )
             .unwrap()
             .unwrap();
-        println!("module={:?}",hex::encode(&module.0));
+        println!("module={:?}", hex::encode(&module.0));
         assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
     }
- // #[ignore]
+    // #[ignore]
     #[test]
     fn test_encode_submission1() {
         let api = PontNet {
             api: "http://localhost:9933".to_string(),
         };
-println!("module={:?}",1);
+        println!("module={:?}", 1);
         // let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
         let module = api
             .encode_submission(
                 "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
                 "ScriptBook",
-                 "sum_func",
-                &["3","9"],
+                "sum_func",
+                &["3", "9"],
                 &[],
                 &None,
             )
             .unwrap()
             .unwrap();
-        println!("module={:?}",hex::encode(&module.0));
+        println!("module={:?}", hex::encode(&module.0));
         assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
     }
- // #[ignore]
+    // #[ignore]
     #[test]
     fn test_encode_submission2() {
         let api = PontNet {
             api: "http://localhost:9933".to_string(),
         };
-println!("module={:?}",1);
+        println!("module={:?}", 1);
         // let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
         let module = api
             .encode_submission(
                 "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
                 "ScriptBook",
-                 "sum_funct",
-                &["3","9"],
+                "sum_funct",
+                &["3", "9"],
                 &["u8"],
                 &None,
             )
             .unwrap()
             .unwrap();
-        println!("module={:?}",hex::encode(&module.0));
+        println!("module={:?}", hex::encode(&module.0));
         assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
     }
 
@@ -736,7 +771,10 @@ println!("module={:?}",1);
         let module = api
             .get_module_abis(
                 &ModuleId::new(
-                    AccountAddress::from_hex_literal("0xD43593C715FDD31C61141ABD04A99FD6822C8558854CCDE39A5684E7A56DA27D").unwrap(),
+                    AccountAddress::from_hex_literal(
+                        "0xD43593C715FDD31C61141ABD04A99FD6822C8558854CCDE39A5684E7A56DA27D",
+                    )
+                    .unwrap(),
                     Identifier::new("ScriptBook").unwrap(),
                 ),
                 &None,
@@ -754,5 +792,4 @@ println!("module={:?}",1);
             module.0.as_slice()
         );
     }
-
 }

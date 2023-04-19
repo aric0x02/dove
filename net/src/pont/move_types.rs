@@ -5,10 +5,10 @@
 // #![cfg_attr(not(feature = "std"), no_std)]
 use super::address::Address;
 use super::bytecode::*;
-use super::wrappers::{IdentifierWrapper,VerifyInput, VerifyInputWithRecursion};
+use super::wrappers::{IdentifierWrapper, VerifyInput, VerifyInputWithRecursion};
 use anyhow::{bail, format_err};
 // use aptos_types::{account_config::CORE_CODE_ADDRESS, event::EventKey, transaction::Module};
-use move_core_types::language_storage::{CORE_CODE_ADDRESS}; 
+use move_core_types::language_storage::{CORE_CODE_ADDRESS};
 //  use scale_info::prelude::string::String;
 // use sp_std::vec::Vec;
 use move_binary_format::{
@@ -31,7 +31,7 @@ use std::collections::BTreeMap;
 // extern crate serde_alt as serde;
 use serde::{de::Error as _, Deserialize, Deserializer, Serialize, Serializer};
 use std::{
-    prelude::*,
+    // prelude::*,
     // collections::btree_map::BTreeMap,
     convert::{From, Into, TryFrom, TryInto},
     fmt,
@@ -142,7 +142,8 @@ pub struct HexEncodedBytes(pub Vec<u8>);
 
 impl HexEncodedBytes {
     pub fn json(&self) -> anyhow::Result<serde_json::Value> {
-        Ok(serde_json::to_value(self).map_err(|_| anyhow::anyhow!("invalid HexEncodedBytes json: {}", self))?)
+        Ok(serde_json::to_value(self)
+            .map_err(|_| anyhow::anyhow!("invalid HexEncodedBytes json: {}", self))?)
     }
 }
 
@@ -239,6 +240,7 @@ pub struct MoveStructValue(pub BTreeMap<IdentifierWrapper, serde_json::Value>);
 // }
 
 /// An enum of the possible Move value types
+#[allow(dead_code)]
 #[derive(Clone, Debug, PartialEq)]
 pub enum MoveValue {
     /// A u8 Move type
@@ -258,10 +260,13 @@ pub enum MoveValue {
     /// A string Move type
     String(String),
 }
-
+#[allow(dead_code)]
 impl MoveValue {
     pub fn json(&self) -> anyhow::Result<serde_json::Value> {
-        Ok(serde_json::to_value(self).map_err(|_| anyhow::anyhow!("invalid MoveValue json: "))?)
+        Ok(
+            serde_json::to_value(self)
+                .map_err(|_| anyhow::anyhow!("invalid MoveValue json: "))?,
+        )
     }
 
     pub fn is_utf8_string(st: &StructTag) -> bool {
@@ -757,7 +762,7 @@ impl From<CompiledModule> for MoveModule {
                 .function_defs
                 .iter()
                 .filter(|def| match def.visibility {
-                    Visibility::Public | Visibility::Friend | Visibility::Script=> true,
+                    Visibility::Public | Visibility::Friend | Visibility::Script => true,
                     Visibility::Private => false,
                 })
                 .map(|def| m.new_move_function(def))
@@ -1040,6 +1045,7 @@ impl From<&AbilitySet> for MoveFunctionGenericTypeParam {
 }
 
 /// Move module bytecode along with it's ABI
+#[allow(dead_code)]
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MoveModuleBytecode {
     pub bytecode: HexEncodedBytes,
@@ -1058,7 +1064,7 @@ impl VerifyInput for MoveModuleBytecode {
         Ok(())
     }
 }
-
+#[allow(dead_code)]
 impl MoveModuleBytecode {
     pub fn new(bytes: Vec<u8>) -> Self {
         Self {
@@ -1105,15 +1111,16 @@ impl VerifyInput for MoveScriptBytecode {
         Ok(())
     }
 }
-
+#[allow(dead_code)]
 impl MoveScriptBytecode {
+    #[allow(dead_code)]
     pub fn new(bytes: Vec<u8>) -> Self {
         Self {
             bytecode: bytes.into(),
             abi: None,
         }
     }
-
+    #[allow(dead_code)]
     pub fn try_parse_abi(mut self) -> Self {
         if self.abi.is_none() {
             // ignore error, because it is possible a transaction script payload contains
@@ -1185,14 +1192,15 @@ impl fmt::Display for EntryFunctionId {
         write!(f, "{}::{}", self.module, self.name)
     }
 }
-
+#[allow(unused)]
 pub fn verify_function_identifier(function: &str) -> anyhow::Result<()> {
-    verify_identifier(function).map_err(|_| format_err!("invalid Move function name: {}", function))
+    verify_identifier(function)
+        .map_err(|_| format_err!("invalid Move function name: {}", function))
 }
 pub fn verify_module_identifier(module: &str) -> anyhow::Result<()> {
     verify_identifier(module).map_err(|_| format_err!("invalid Move module name: {}", module))
 }
-
+#[allow(unused)]
 pub fn verify_field_identifier(field: &str) -> anyhow::Result<()> {
     verify_identifier(field).map_err(|_| format_err!("invalid Move field name: {}", field))
 }

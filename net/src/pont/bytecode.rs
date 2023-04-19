@@ -15,11 +15,9 @@ use move_binary_format::{
 use move_core_types::{account_address::AccountAddress, identifier::IdentStr};
 
 use super::move_types::{
-        MoveAbility, MoveFunctionGenericTypeParam, MoveStruct, MoveStructField,
-        MoveStructGenericTypeParam,MoveFunction, MoveStructTag, MoveType,
-    }
-    
-;
+    MoveAbility, MoveFunctionGenericTypeParam, MoveStruct, MoveStructField,
+    MoveStructGenericTypeParam, MoveFunction, MoveStructTag, MoveType,
+};
 
 pub trait Bytecode {
     fn module_handle_at(&self, idx: ModuleHandleIndex) -> &ModuleHandle;
@@ -126,7 +124,7 @@ pub trait Bytecode {
         MoveFunction {
             name: name.into(),
             visibility: def.visibility.into(),
-            is_entry: def.visibility as u8== 0x2,//Script Function
+            is_entry: def.visibility as u8 == 0x2, //Script Function
             generic_type_params: fhandle
                 .type_parameters
                 .iter()
@@ -176,7 +174,7 @@ impl Bytecode for CompiledModule {
     fn find_entry_function(&self, name: &IdentStr) -> Option<MoveFunction> {
         self.function_defs
             .iter()
-            .filter(|def| def.visibility as u8== 0x2)
+            .filter(|def| def.visibility as u8 == 0x2)
             .find(|def| {
                 let fhandle = ModuleAccess::function_handle_at(self, def.function);
                 ModuleAccess::identifier_at(self, fhandle.name) == name
