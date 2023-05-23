@@ -58,6 +58,15 @@ pub trait Net {
         tag: &str,
         height: &Option<Block>,
     ) -> Result<Option<BytesForBlock>>;
+    fn get_table_entry(
+        &self,
+        address: &AccountAddress,
+        handle: &str,
+        key: &str,
+        key_type: &str,
+        value_type: &str,
+        height: &Option<Block>,
+    ) -> Result<Option<BytesForBlock>>;
     fn get_module_abi(
         &self,
         module_id: &ModuleId,

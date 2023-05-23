@@ -12,7 +12,8 @@ mod address;
 mod bytecode;
 pub mod move_types;
 mod wrappers;
-// use abi::ModuleAbi;
+#[cfg(test)]
+use abi::ModuleAbi;
 use move_types::MoveModuleBytecode;
 pub type Block = String;
 
@@ -276,6 +277,69 @@ impl Net for PontNet {
             Ok(None)
         }
     }
+    fn get_table_entry(
+        &self,
+        address: &AccountAddress,
+        handle: &str,
+        key: &str,
+        key_type: &str,
+        value_type: &str,
+        height: &Option<Block>,
+    ) -> Result<Option<BytesForBlock>> {
+        let req = Request {
+            id: 1,
+            jsonrpc: "2.0",
+            method: "mvm_getTableEntry",
+            params: vec![
+                // address_to_ss58(address),
+                format!("0x{}", hex::encode(handle.as_bytes())),
+                format!("0x{}", hex::encode(key.as_bytes())),
+                format!("0x{}", hex::encode(key_type.as_bytes())),
+                format!("0x{}", hex::encode(value_type.as_bytes())),
+            ],
+        };
+        let mut headers = reqwest::header::HeaderMap::new();
+        headers.insert(
+            "Content-Type",
+            reqwest::header::HeaderValue::from_static("application/json"),
+        );
+        let response = reqwest::blocking::Client::new()
+            .post(&self.api)
+            .headers(headers)
+            .json(&req)
+            .send()?;
+        if response.status() != 200 {
+            bail!(
+                "Failed to get table entry :{:?} .{:?}.{:?}.{:?}.{:?}. Error:{}",
+                &address,
+                &handle,
+                &key,
+                &key_type,
+                &value_type,
+                response.status()
+            );
+        }
+
+        let resp = response.json::<Response>()?;
+        if let Some(err) = resp.error {
+            bail!("{:?}", err);
+        }
+        if let Some(result) = resp.result {
+            println!(
+                "result=={:?}==={:?}",
+                &result,
+                std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap()
+            );
+
+            let result = hex::decode(&result[2..])?;
+            Ok(Some(BytesForBlock(
+                result,
+                height.clone().unwrap_or_default(),
+            )))
+        } else {
+            Ok(None)
+        }
+    }
     fn get_module_abi(
         &self,
         module_id: &ModuleId,
@@ -363,20 +427,20 @@ impl Net for PontNet {
             bail!("{:?}", err);
         }
         if let Some(result) = resp.result {
-            println!(
-                "result=={:?}==={:?}",
-                &result,
-                std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap()
-            );
+            // println!(
+            //     "result=={:?}==={:?}",
+            //     &result,
+            //     std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap()
+            // );
             let s = std::str::from_utf8(&hex::decode(&result[2..]).unwrap())
                 .unwrap()
                 .to_string(); //.replace("\"","");
-            println!("s====={:?}", &s);
+                              // println!("s====={:?}", &s);
             let res1: MoveModuleBytecode = serde_json::from_str(&s).unwrap();
-            println!("res1====={:?}", res1);
+            // println!("res1====={:?}", res1);
             let res: MoveModuleBytecode =
                 serde_json::from_slice(&hex::decode(&result[2..]).unwrap()).unwrap();
-            println!("res====={:?}", res);
+            // println!("res====={:?}", res);
             Ok(Some(BytesForBlock(
                 result.into(),
                 height.clone().unwrap_or_default(),
@@ -663,6 +727,37 @@ mod tests {
     }
     // #[ignore]
     #[test]
+    fn test_get_table_entry() {
+        match serde_json::from_value::<u64>(
+            serde_json::from_str::<serde_json::Value>("1").unwrap(),
+        ) {
+            Ok(s) => {
+                println!("s={:?}", s);
+            }
+            Err(s) => {
+                println!("s=error =={:?}", s);
+            }
+        }
+        let api = PontNet {
+            api: "http://localhost:9933".to_string(),
+        };
+
+        let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
+        let module = api
+            .get_table_entry(
+                &addr,
+                "132692409849679358887631062327771453437",
+                "1",
+                "u64",
+                "0xD43593C715FDD31C61141ABD04A99FD6822C8558854CCDE39A5684E7A56DA27D::TodoList::Task",
+                &None,
+            )
+            .unwrap()
+            .unwrap();
+        assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+    }
+    // #[ignore]
+    #[test]
     fn test_get_module_abi() {
         let api = PontNet {
             api: "http://localhost:9933".to_string(),
@@ -701,7 +796,6 @@ mod tests {
         let api = PontNet {
             api: "http://localhost:9933".to_string(),
         };
-        println!("module={:?}", 1);
         // let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
         let module = api
             .encode_submission(
@@ -723,7 +817,6 @@ mod tests {
         let api = PontNet {
             api: "http://localhost:9933".to_string(),
         };
-        println!("module={:?}", 1);
         // let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
         let module = api
             .encode_submission(
@@ -745,7 +838,6 @@ mod tests {
         let api = PontNet {
             api: "http://localhost:9933".to_string(),
         };
-        println!("module={:?}", 1);
         // let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
         let module = api
             .encode_submission(
@@ -761,7 +853,27 @@ mod tests {
         println!("module={:?}", hex::encode(&module.0));
         assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
     }
-
+    // #[ignore]
+    #[test]
+    fn test_encode_submission3() {
+        let api = PontNet {
+            api: "http://localhost:9933".to_string(),
+        };
+        // let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
+        let module = api
+            .encode_submission(
+                "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+                "ScriptBook",
+                "store_sum_func",
+                &["3", "9"],
+                &[],
+                &None,
+            )
+            .unwrap()
+            .unwrap();
+        println!("module={:?}", hex::encode(&module.0));
+        assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+    }
     // #[ignore]
     #[test]
     fn test_get_module_abis() {
