@@ -94,7 +94,7 @@ impl Deploy {
         }
 
         pac.sort()?;
-
+        // println!("Print  package {:?} hex bytes: 0x{}", output_file_path, hex::encode(pac.encode()?));
         fs::write(&output_file_path, pac.encode()?)?;
 
         println!(

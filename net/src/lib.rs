@@ -40,19 +40,19 @@ pub trait Net {
         tag: &StructTag,
         height: &Option<Block>,
     ) -> Result<Option<BytesForBlock>>;
+    // fn get_resources(
+    //     &self,
+    //     address: &AccountAddress,
+    //     tag: &StructTag,
+    //     height: &Option<Block>,
+    // ) -> Result<Option<BytesForBlock>>;
+    // fn get_resources2(
+    //     &self,
+    //     address: &AccountAddress,
+    //     tag: &StructTag,
+    //     height: &Option<Block>,
+    // ) -> Result<Option<BytesForBlock>>;
     fn get_resources(
-        &self,
-        address: &AccountAddress,
-        tag: &StructTag,
-        height: &Option<Block>,
-    ) -> Result<Option<BytesForBlock>>;
-    fn get_resources2(
-        &self,
-        address: &AccountAddress,
-        tag: &StructTag,
-        height: &Option<Block>,
-    ) -> Result<Option<BytesForBlock>>;
-    fn get_resources3(
         &self,
         address: &AccountAddress,
         tag: &str,

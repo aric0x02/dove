@@ -115,115 +115,109 @@ impl Net for PontNet {
             Ok(None)
         }
     }
+    // fn get_resources(
+    //     &self,
+    //     address: &AccountAddress,
+    //     tag: &StructTag,
+    //     height: &Option<Block>,
+    // ) -> Result<Option<BytesForBlock>> {
+    //     let req = Request {
+    //         id: 1,
+    //         jsonrpc: "2.0",
+    //         method: "mvm_getResources",
+    //         params: vec![
+    //             address_to_ss58(address),
+    //             format!("0x{}", hex::encode(bcs::to_bytes(&tag)?)),
+    //         ],
+    //     };
+    //     let mut headers = reqwest::header::HeaderMap::new();
+    //     headers.insert(
+    //         "Content-Type",
+    //         reqwest::header::HeaderValue::from_static("application/json"),
+    //     );
+    //     let response = reqwest::blocking::Client::new()
+    //         .post(&self.api)
+    //         .headers(headers)
+    //         .json(&req)
+    //         .send()?;
+    //     if response.status() != 200 {
+    //         bail!(
+    //             "Failed to get resource :{:?} {:?}. Error:{}",
+    //             &address,
+    //             &tag,
+    //             response.status()
+    //         );
+    //     }
+
+    //     let resp = response.json::<Response>()?;
+    //     if let Some(err) = resp.error {
+    //         bail!("{:?}", err);
+    //     }
+    //     if let Some(result) = resp.result {
+    //         let result = hex::decode(&result[2..])?;
+    //         Ok(Some(BytesForBlock(
+    //             result,
+    //             height.clone().unwrap_or_default(),
+    //         )))
+    //     } else {
+    //         Ok(None)
+    //     }
+    // }
+    // fn get_resources2(
+    //     &self,
+    //     address: &AccountAddress,
+    //     tag: &StructTag,
+    //     height: &Option<Block>,
+    // ) -> Result<Option<BytesForBlock>> {
+    //     let req = Request {
+    //         id: 1,
+    //         jsonrpc: "2.0",
+    //         method: "mvm_getResources2",
+    //         params: vec![
+    //             address_to_ss58(address),
+    //             format!("0x{}", hex::encode(bcs::to_bytes(&tag)?)),
+    //         ],
+    //     };
+    //     let mut headers = reqwest::header::HeaderMap::new();
+    //     headers.insert(
+    //         "Content-Type",
+    //         reqwest::header::HeaderValue::from_static("application/json"),
+    //     );
+    //     let response = reqwest::blocking::Client::new()
+    //         .post(&self.api)
+    //         .headers(headers)
+    //         .json(&req)
+    //         .send()?;
+    //     if response.status() != 200 {
+    //         bail!(
+    //             "Failed to get resource :{:?} {:?}. Error:{}",
+    //             &address,
+    //             &tag,
+    //             response.status()
+    //         );
+    //     }
+
+    //     let resp = response.json::<Response>()?;
+    //     if let Some(err) = resp.error {
+    //         bail!("{:?}", err);
+    //     }
+    //     if let Some(result) = resp.result {
+    //         println!(
+    //             "result=={:?}==={:?}",
+    //             &result,
+    //             std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap()
+    //         );
+
+    //         let result = hex::decode(&result[2..])?;
+    //         Ok(Some(BytesForBlock(
+    //             result,
+    //             height.clone().unwrap_or_default(),
+    //         )))
+    //     } else {
+    //         Ok(None)
+    //     }
+    // }
     fn get_resources(
-        &self,
-        address: &AccountAddress,
-        tag: &StructTag,
-        height: &Option<Block>,
-    ) -> Result<Option<BytesForBlock>> {
-        let req = Request {
-            id: 1,
-            jsonrpc: "2.0",
-            method: "mvm_getResources",
-            params: vec![
-                address_to_ss58(address),
-                format!("0x{}", hex::encode(bcs::to_bytes(&tag)?)),
-            ],
-        };
-        let mut headers = reqwest::header::HeaderMap::new();
-        headers.insert(
-            "Content-Type",
-            reqwest::header::HeaderValue::from_static("application/json"),
-        );
-        let response = reqwest::blocking::Client::new()
-            .post(&self.api)
-            .headers(headers)
-            .json(&req)
-            .send()?;
-        if response.status() != 200 {
-            bail!(
-                "Failed to get resource :{:?} {:?}. Error:{}",
-                &address,
-                &tag,
-                response.status()
-            );
-        }
-
-        let resp = response.json::<Response>()?;
-        if let Some(err) = resp.error {
-            bail!("{:?}", err);
-        }
-        if let Some(result) = resp.result {
-            println!(
-                "result=={:?}==={:?}",
-                &result,
-                std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap()
-            );
-
-            let result = hex::decode(&result[2..])?;
-            Ok(Some(BytesForBlock(
-                result,
-                height.clone().unwrap_or_default(),
-            )))
-        } else {
-            Ok(None)
-        }
-    }
-    fn get_resources2(
-        &self,
-        address: &AccountAddress,
-        tag: &StructTag,
-        height: &Option<Block>,
-    ) -> Result<Option<BytesForBlock>> {
-        let req = Request {
-            id: 1,
-            jsonrpc: "2.0",
-            method: "mvm_getResources2",
-            params: vec![
-                address_to_ss58(address),
-                format!("0x{}", hex::encode(bcs::to_bytes(&tag)?)),
-            ],
-        };
-        let mut headers = reqwest::header::HeaderMap::new();
-        headers.insert(
-            "Content-Type",
-            reqwest::header::HeaderValue::from_static("application/json"),
-        );
-        let response = reqwest::blocking::Client::new()
-            .post(&self.api)
-            .headers(headers)
-            .json(&req)
-            .send()?;
-        if response.status() != 200 {
-            bail!(
-                "Failed to get resource :{:?} {:?}. Error:{}",
-                &address,
-                &tag,
-                response.status()
-            );
-        }
-
-        let resp = response.json::<Response>()?;
-        if let Some(err) = resp.error {
-            bail!("{:?}", err);
-        }
-        if let Some(result) = resp.result {
-            println!(
-                "result=={:?}==={:?}",
-                &result,
-                std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap()
-            );
-
-            let result = hex::decode(&result[2..])?;
-            Ok(Some(BytesForBlock(
-                result,
-                height.clone().unwrap_or_default(),
-            )))
-        } else {
-            Ok(None)
-        }
-    }
-    fn get_resources3(
         &self,
         address: &AccountAddress,
         tag: &str,
@@ -232,7 +226,7 @@ impl Net for PontNet {
         let req = Request {
             id: 1,
             jsonrpc: "2.0",
-            method: "mvm_getResources3",
+            method: "mvm_getResources",
             params: vec![
                 address_to_ss58(address),
                 format!("0x{}", hex::encode(tag.as_bytes())),
@@ -262,12 +256,6 @@ impl Net for PontNet {
             bail!("{:?}", err);
         }
         if let Some(result) = resp.result {
-            println!(
-                "result=={:?}==={:?}",
-                &result,
-                std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap()
-            );
-
             let result = hex::decode(&result[2..])?;
             Ok(Some(BytesForBlock(
                 result,
@@ -325,12 +313,6 @@ impl Net for PontNet {
             bail!("{:?}", err);
         }
         if let Some(result) = resp.result {
-            println!(
-                "result=={:?}==={:?}",
-                &result,
-                std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap()
-            );
-
             let result = hex::decode(&result[2..])?;
             Ok(Some(BytesForBlock(
                 result,
@@ -351,10 +333,6 @@ impl Net for PontNet {
             method: "mvm_getModuleABI",
             params: vec![format!("0x{}", hex::encode(bcs::to_bytes(module_id)?))],
         };
-        println!(
-            "================0x{}",
-            hex::encode(bcs::to_bytes(module_id)?)
-        );
         let mut headers = reqwest::header::HeaderMap::new();
         headers.insert(
             "Content-Type",
@@ -373,7 +351,6 @@ impl Net for PontNet {
                 response.status()
             );
         }
-        // println!("{:?}", response.json::<Response>());
         let resp = response.json::<Response>()?;
         if let Some(err) = resp.error {
             bail!("{:?}", err);
@@ -399,10 +376,6 @@ impl Net for PontNet {
             method: "mvm_getModuleABIs",
             params: vec![format!("0x{}", hex::encode(bcs::to_bytes(module_id)?))],
         };
-        println!(
-            "================0x{}",
-            hex::encode(bcs::to_bytes(module_id)?)
-        );
         let mut headers = reqwest::header::HeaderMap::new();
         headers.insert(
             "Content-Type",
@@ -421,26 +394,17 @@ impl Net for PontNet {
                 response.status()
             );
         }
-        // println!("{:?}", response.json::<Response>());
         let resp = response.json::<Response>()?;
         if let Some(err) = resp.error {
             bail!("{:?}", err);
         }
         if let Some(result) = resp.result {
-            // println!(
-            //     "result=={:?}==={:?}",
-            //     &result,
-            //     std::str::from_utf8(&hex::decode(&result[2..]).unwrap()).unwrap()
-            // );
             let s = std::str::from_utf8(&hex::decode(&result[2..]).unwrap())
                 .unwrap()
-                .to_string(); //.replace("\"","");
-                              // println!("s====={:?}", &s);
-            let res1: MoveModuleBytecode = serde_json::from_str(&s).unwrap();
-            // println!("res1====={:?}", res1);
-            let res: MoveModuleBytecode =
+                .to_string();
+            let _res1: MoveModuleBytecode = serde_json::from_str(&s).unwrap();
+            let _res: MoveModuleBytecode =
                 serde_json::from_slice(&hex::decode(&result[2..]).unwrap()).unwrap();
-            // println!("res====={:?}", res);
             Ok(Some(BytesForBlock(
                 result.into(),
                 height.clone().unwrap_or_default(),
@@ -621,10 +585,7 @@ mod tests {
             )
             .unwrap()
             .unwrap();
-        println!(
-            "module={:?}",
-            MoveModuleBytecode::new(module.0.clone()).try_parse_abi()
-        );
+
         assert_eq!(
             [
                 161, 28, 235, 11, 2, 0, 0, 0, 6, 1, 0, 2, 3, 2, 10, 5, 12, 3, 7, 15, 23, 8, 38,
@@ -640,7 +601,7 @@ mod tests {
     ///     and there is a resource on "5grwvaef5zxb26fz9rcqpdws57cterhpnehxcpcnohgkutqy::Store::U64".
     // #[ignore]
     #[test]
-    fn test_get_resource() {
+    fn test_get_resource_sum() {
         let api = PontNet {
             api: "http://localhost:9933".to_string(),
         };
@@ -659,11 +620,103 @@ mod tests {
             )
             .unwrap()
             .unwrap();
-        assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(module.0, [12, 0, 0, 0, 0, 0, 0, 0]);
     }
+    //     // #[ignore]
+    //     #[test]
+    //     fn test_get_resources1() {
+    //         let api = PontNet {
+    //             api: "http://localhost:9933".to_string(),
+    //         };
+
+    //         let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
+    //         let module = api
+    //             .get_resources(
+    //                 &addr,
+    //                 &StructTag {
+    //                     address: addr,
+    //                     module: Identifier::new("Storage").unwrap(),
+    //                     name: Identifier::new("Sum").unwrap(),
+    //                     type_params: vec![],
+    //                 },
+    //                 &None,
+    //             )
+    //             .unwrap()
+    //             .unwrap();
+    //         assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+    //     }
+    //  // #[ignore]
+    //     #[test]
+    //     fn test_get_resources_todo1() {
+    //         let api = PontNet {
+    //             api: "http://localhost:9933".to_string(),
+    //         };
+
+    //         let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
+    //         let module = api
+    //             .get_resources(
+    //                 &addr,
+    //                 &StructTag {
+    //                     address: addr,
+    //                     module: Identifier::new("TodoList").unwrap(),
+    //                     name: Identifier::new("TodoList").unwrap(),
+    //                     type_params: vec![],
+    //                 },
+    //                 &None,
+    //             )
+    //             .unwrap()
+    //             .unwrap();
+    //         assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+    //     }
+    // // #[ignore]
+    // #[test]
+    // fn test_get_resources2() {
+    //     let api = PontNet {
+    //         api: "http://localhost:9933".to_string(),
+    //     };
+
+    //     let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
+    //     let module = api
+    //         .get_resources2(
+    //             &addr,
+    //             &StructTag {
+    //                 address: addr,
+    //                 module: Identifier::new("Storage").unwrap(),
+    //                 name: Identifier::new("Sum").unwrap(),
+    //                 type_params: vec![],
+    //             },
+    //             &None,
+    //         )
+    //         .unwrap()
+    //         .unwrap();
+    //     assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+    // }
+    // #[ignore]
+    // #[test]
+    // fn test_get_resources_todo2() {
+    //     let api = PontNet {
+    //         api: "http://localhost:9933".to_string(),
+    //     };
+
+    //     let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
+    //     let module = api
+    //         .get_resources2(
+    //             &addr,
+    //             &StructTag {
+    //                 address: addr,
+    //                 module: Identifier::new("TodoList").unwrap(),
+    //                 name: Identifier::new("TodoList").unwrap(),
+    //                 type_params: vec![],
+    //             },
+    //             &None,
+    //         )
+    //         .unwrap()
+    //         .unwrap();
+    //     assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+    // }
     // #[ignore]
     #[test]
-    fn test_get_resources1() {
+    fn test_get_resources_sum() {
         let api = PontNet {
             api: "http://localhost:9933".to_string(),
         };
@@ -672,72 +725,79 @@ mod tests {
         let module = api
             .get_resources(
                 &addr,
-                &StructTag {
-                    address: addr,
-                    module: Identifier::new("Storage").unwrap(),
-                    name: Identifier::new("Sum").unwrap(),
-                    type_params: vec![],
-                },
-                &None,
-            )
-            .unwrap()
-            .unwrap();
-        assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
-    }
-    // #[ignore]
-    #[test]
-    fn test_get_resources2() {
-        let api = PontNet {
-            api: "http://localhost:9933".to_string(),
-        };
-
-        let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
-        let module = api
-            .get_resources2(
-                &addr,
-                &StructTag {
-                    address: addr,
-                    module: Identifier::new("Storage").unwrap(),
-                    name: Identifier::new("Sum").unwrap(),
-                    type_params: vec![],
-                },
-                &None,
-            )
-            .unwrap()
-            .unwrap();
-        assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
-    }
-    // #[ignore]
-    #[test]
-    fn test_get_resources3() {
-        let api = PontNet {
-            api: "http://localhost:9933".to_string(),
-        };
-
-        let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
-        let module = api
-            .get_resources3(
-                &addr,
 "0xD43593C715FDD31C61141ABD04A99FD6822C8558854CCDE39A5684E7A56DA27D::Storage::Sum",
                 &None,
             )
             .unwrap()
             .unwrap();
-        assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(
+            module.0,
+            [
+                123, 34, 116, 121, 112, 101, 34, 58, 34, 68, 52, 51, 53, 57, 51, 67, 55, 49, 53,
+                70, 68, 68, 51, 49, 67, 54, 49, 49, 52, 49, 65, 66, 68, 48, 52, 65, 57, 57, 70,
+                68, 54, 56, 50, 50, 67, 56, 53, 53, 56, 56, 53, 52, 67, 67, 68, 69, 51, 57, 65,
+                53, 54, 56, 52, 69, 55, 65, 53, 54, 68, 65, 50, 55, 68, 58, 58, 83, 116, 111,
+                114, 97, 103, 101, 58, 58, 83, 117, 109, 34, 44, 34, 100, 97, 116, 97, 34, 58,
+                123, 34, 118, 97, 108, 34, 58, 49, 50, 125, 125
+            ]
+        );
+    }
+    // #[ignore]
+    #[test]
+    fn test_get_resources_todo() {
+        let api = PontNet {
+            api: "http://localhost:9933".to_string(),
+        };
+
+        let addr = ss58_to_address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY").unwrap();
+        let module = api
+            .get_resources(
+                &addr,
+"0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d::TodoList::TodoList",
+                &None,
+            )
+            .unwrap()
+            .unwrap();
+        assert_eq!(
+            module.0,
+            [
+                123, 34, 116, 121, 112, 101, 34, 58, 34, 68, 52, 51, 53, 57, 51, 67, 55, 49, 53,
+                70, 68, 68, 51, 49, 67, 54, 49, 49, 52, 49, 65, 66, 68, 48, 52, 65, 57, 57, 70,
+                68, 54, 56, 50, 50, 67, 56, 53, 53, 56, 56, 53, 52, 67, 67, 68, 69, 51, 57, 65,
+                53, 54, 56, 52, 69, 55, 65, 53, 54, 68, 65, 50, 55, 68, 58, 58, 84, 111, 100,
+                111, 76, 105, 115, 116, 58, 58, 84, 111, 100, 111, 76, 105, 115, 116, 34, 44, 34,
+                100, 97, 116, 97, 34, 58, 123, 34, 115, 101, 116, 95, 116, 97, 115, 107, 95, 101,
+                118, 101, 110, 116, 34, 58, 123, 34, 99, 111, 117, 110, 116, 101, 114, 34, 58,
+                49, 44, 34, 103, 117, 105, 100, 34, 58, 123, 34, 103, 117, 105, 100, 34, 58, 123,
+                34, 105, 100, 34, 58, 123, 34, 97, 100, 100, 114, 34, 58, 91, 50, 49, 50, 44, 53,
+                51, 44, 49, 52, 55, 44, 49, 57, 57, 44, 50, 49, 44, 50, 53, 51, 44, 50, 49, 49,
+                44, 50, 56, 44, 57, 55, 44, 50, 48, 44, 50, 54, 44, 49, 56, 57, 44, 52, 44, 49,
+                54, 57, 44, 49, 53, 57, 44, 50, 49, 52, 44, 49, 51, 48, 44, 52, 52, 44, 49, 51,
+                51, 44, 56, 56, 44, 49, 51, 51, 44, 55, 54, 44, 50, 48, 53, 44, 50, 50, 55, 44,
+                49, 53, 52, 44, 56, 54, 44, 49, 51, 50, 44, 50, 51, 49, 44, 49, 54, 53, 44, 49,
+                48, 57, 44, 49, 54, 50, 44, 49, 50, 53, 93, 44, 34, 99, 114, 101, 97, 116, 105,
+                111, 110, 95, 110, 117, 109, 34, 58, 48, 125, 125, 44, 34, 108, 101, 110, 95, 98,
+                121, 116, 101, 115, 34, 58, 52, 48, 125, 125, 44, 34, 116, 97, 115, 107, 95, 99,
+                111, 117, 110, 116, 101, 114, 34, 58, 49, 44, 34, 116, 97, 115, 107, 115, 34, 58,
+                123, 34, 104, 97, 110, 100, 108, 101, 34, 58, 34, 49, 51, 50, 54, 57, 50, 52, 48,
+                57, 56, 52, 57, 54, 55, 57, 51, 53, 56, 56, 56, 55, 54, 51, 49, 48, 54, 50, 51,
+                50, 55, 55, 55, 49, 52, 53, 51, 52, 51, 55, 34, 125, 125, 125
+            ]
+        );
     }
     // #[ignore]
     #[test]
     fn test_get_table_entry() {
-        match serde_json::from_value::<u64>(
-            serde_json::from_str::<serde_json::Value>("1").unwrap(),
-        ) {
-            Ok(s) => {
-                println!("s={:?}", s);
-            }
-            Err(s) => {
-                println!("s=error =={:?}", s);
-            }
-        }
+        // match serde_json::from_value::<u64>(
+        //     serde_json::from_str::<serde_json::Value>("1").unwrap(),
+        // ) {
+        //     Ok(s) => {
+        //         println!("s={:?}", s);
+        //     }
+        //     Err(s) => {
+        //         println!("s=error =={:?}", s);
+        //     }
+        // }
         let api = PontNet {
             api: "http://localhost:9933".to_string(),
         };
@@ -754,7 +814,21 @@ mod tests {
             )
             .unwrap()
             .unwrap();
-        assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(
+            module.0,
+            [
+                123, 34, 97, 100, 100, 114, 101, 115, 115, 34, 58, 91, 50, 49, 50, 44, 53, 51,
+                44, 49, 52, 55, 44, 49, 57, 57, 44, 50, 49, 44, 50, 53, 51, 44, 50, 49, 49, 44,
+                50, 56, 44, 57, 55, 44, 50, 48, 44, 50, 54, 44, 49, 56, 57, 44, 52, 44, 49, 54,
+                57, 44, 49, 53, 57, 44, 50, 49, 52, 44, 49, 51, 48, 44, 52, 52, 44, 49, 51, 51,
+                44, 56, 56, 44, 49, 51, 51, 44, 55, 54, 44, 50, 48, 53, 44, 50, 50, 55, 44, 49,
+                53, 52, 44, 56, 54, 44, 49, 51, 50, 44, 50, 51, 49, 44, 49, 54, 53, 44, 49, 48,
+                57, 44, 49, 54, 50, 44, 49, 50, 53, 93, 44, 34, 99, 111, 109, 112, 108, 101, 116,
+                101, 100, 34, 58, 102, 97, 108, 115, 101, 44, 34, 99, 111, 110, 116, 101, 110,
+                116, 34, 58, 34, 48, 120, 52, 50, 52, 50, 52, 50, 34, 44, 34, 116, 97, 115, 107,
+                95, 105, 100, 34, 58, 49, 125
+            ]
+        );
     }
     // #[ignore]
     #[test]
@@ -775,9 +849,9 @@ mod tests {
             )
             .unwrap()
             .unwrap();
-        if let Ok(module_abi) = bcs::from_bytes::<ModuleAbi>(&module.0) {
-            println!("module_abi={:?}", module_abi);
-        }
+        // if let Ok(module_abi) = bcs::from_bytes::<ModuleAbi>(&module.0) {
+        //     println!("module_abi={:?}", module_abi);
+        // }
         assert_eq!(
             [
                 161, 28, 235, 11, 2, 0, 0, 0, 6, 1, 0, 2, 3, 2, 10, 5, 12, 3, 7, 15, 23, 8, 38,
@@ -792,7 +866,7 @@ mod tests {
 
     // #[ignore]
     #[test]
-    fn test_encode_submission() {
+    fn test_encode_submission0() {
         let api = PontNet {
             api: "http://localhost:9933".to_string(),
         };
@@ -808,8 +882,14 @@ mod tests {
             )
             .unwrap()
             .unwrap();
-        println!("module={:?}", hex::encode(&module.0));
-        assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(
+            module.0,
+            [
+                0, 0, 1, 212, 53, 147, 199, 21, 253, 211, 28, 97, 20, 26, 189, 4, 169, 159, 214,
+                130, 44, 133, 88, 133, 76, 205, 227, 154, 86, 132, 231, 165, 109, 162, 125, 10,
+                83, 99, 114, 105, 112, 116, 66, 111, 111, 107, 4, 116, 101, 115, 116, 0, 0
+            ]
+        );
     }
     // #[ignore]
     #[test]
@@ -829,8 +909,15 @@ mod tests {
             )
             .unwrap()
             .unwrap();
-        println!("module={:?}", hex::encode(&module.0));
-        assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(
+            module.0,
+            [
+                0, 1, 1, 1, 212, 53, 147, 199, 21, 253, 211, 28, 97, 20, 26, 189, 4, 169, 159,
+                214, 130, 44, 133, 88, 133, 76, 205, 227, 154, 86, 132, 231, 165, 109, 162, 125,
+                10, 83, 99, 114, 105, 112, 116, 66, 111, 111, 107, 8, 115, 117, 109, 95, 102,
+                117, 110, 99, 2, 8, 3, 0, 0, 0, 0, 0, 0, 0, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0
+            ]
+        );
     }
     // #[ignore]
     #[test]
@@ -850,8 +937,15 @@ mod tests {
             )
             .unwrap()
             .unwrap();
-        println!("module={:?}", hex::encode(&module.0));
-        assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(
+            module.0,
+            [
+                0, 1, 1, 1, 212, 53, 147, 199, 21, 253, 211, 28, 97, 20, 26, 189, 4, 169, 159,
+                214, 130, 44, 133, 88, 133, 76, 205, 227, 154, 86, 132, 231, 165, 109, 162, 125,
+                10, 83, 99, 114, 105, 112, 116, 66, 111, 111, 107, 9, 115, 117, 109, 95, 102,
+                117, 110, 99, 116, 2, 8, 3, 0, 0, 0, 0, 0, 0, 0, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0
+            ]
+        );
     }
     // #[ignore]
     #[test]
@@ -871,8 +965,16 @@ mod tests {
             )
             .unwrap()
             .unwrap();
-        println!("module={:?}", hex::encode(&module.0));
-        assert_eq!(module.0, [100, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(
+            module.0,
+            [
+                0, 1, 1, 1, 212, 53, 147, 199, 21, 253, 211, 28, 97, 20, 26, 189, 4, 169, 159,
+                214, 130, 44, 133, 88, 133, 76, 205, 227, 154, 86, 132, 231, 165, 109, 162, 125,
+                10, 83, 99, 114, 105, 112, 116, 66, 111, 111, 107, 14, 115, 116, 111, 114, 101,
+                95, 115, 117, 109, 95, 102, 117, 110, 99, 2, 8, 3, 0, 0, 0, 0, 0, 0, 0, 8, 9, 0,
+                0, 0, 0, 0, 0, 0, 0
+            ]
+        );
     }
     // #[ignore]
     #[test]
