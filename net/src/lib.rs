@@ -40,6 +40,52 @@ pub trait Net {
         tag: &StructTag,
         height: &Option<Block>,
     ) -> Result<Option<BytesForBlock>>;
+    // fn get_resources(
+    //     &self,
+    //     address: &AccountAddress,
+    //     tag: &StructTag,
+    //     height: &Option<Block>,
+    // ) -> Result<Option<BytesForBlock>>;
+    // fn get_resources2(
+    //     &self,
+    //     address: &AccountAddress,
+    //     tag: &StructTag,
+    //     height: &Option<Block>,
+    // ) -> Result<Option<BytesForBlock>>;
+    fn get_resources(
+        &self,
+        address: &AccountAddress,
+        tag: &str,
+        height: &Option<Block>,
+    ) -> Result<Option<BytesForBlock>>;
+    fn get_table_entry(
+        &self,
+        address: &AccountAddress,
+        handle: &str,
+        key: &str,
+        key_type: &str,
+        value_type: &str,
+        height: &Option<Block>,
+    ) -> Result<Option<BytesForBlock>>;
+    fn get_module_abi(
+        &self,
+        module_id: &ModuleId,
+        height: &Option<Block>,
+    ) -> Result<Option<BytesForBlock>>;
+    fn get_module_abis(
+        &self,
+        module_id: &ModuleId,
+        height: &Option<Block>,
+    ) -> Result<Option<BytesForBlock>>;
+    fn encode_submission(
+        &self,
+        addr: &str,
+        module: &str,
+        function: &str,
+        arguments: &[&str],
+        type_parameters: &[&str],
+        height: &Option<Block>,
+    ) -> Result<Option<BytesForBlock>>;
 }
 
 pub struct NetView {

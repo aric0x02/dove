@@ -54,7 +54,7 @@ pub struct View {
     #[clap(long, display_order = 5, help = "Path to output file")]
     output: Option<PathBuf>,
 
-    #[clap(long, short, display_order = 6, help = "Block number")]
+    #[clap(long, display_order = 6, help = "Block number")]
     height: Option<String>,
 }
 

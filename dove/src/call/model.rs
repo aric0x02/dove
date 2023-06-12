@@ -172,7 +172,7 @@ impl TryInto<TransactionArgument> for ScriptArg {
             ScriptArg::VectorU64(_)
             | ScriptArg::VectorU128(_)
             | ScriptArg::VectorBool(_)
-            | ScriptArg::VectorAddress(_) => bail!("Unssuported transaction args."),
+            | ScriptArg::VectorAddress(_) => bail!("Unsupported transaction args."),
         })
     }
 }

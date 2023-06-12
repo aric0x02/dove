@@ -31,6 +31,7 @@ move-command-line-common = { git = "https://github.com/pontem-network/move.git",
 move-cli = { git = "https://github.com/pontem-network/move.git", branch = "release-1.7.1" }
 pontem = { git = "https://github.com/pontem-network/move.git", branch = "release-1.7.1" }
 move-resource-viewer = { package = "move-resource-viewer", git = "https://github.com/pontem-network/move.git", branch = "release-1.7.1" }
+move-table-extension = { git = "https://github.com/pontem-network/move.git", branch = "release-1.7.1" }
 
 # third-party dependencies
 log = "0.4.14"

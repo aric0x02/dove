@@ -202,7 +202,7 @@ where
     let count = functions.iter().filter(|r| r.is_ok()).count();
     if count == 0 {
         if functions.is_empty() {
-            bail!("Couldn't find a function with given signature.");
+            bail!("Couldn't find a function with  given signature.functions is empty.");
         } else {
             functions.remove(0)?;
             unreachable!();

@@ -805,7 +805,7 @@ dependencies = [
 
 [[package]]
 name = "dove"
-version = "1.7.0"
+version = "1.7.1"
 dependencies = [
  "aes 0.7.5",
  "anyhow",
@@ -834,6 +834,7 @@ dependencies = [
  "move-resource-viewer",
  "move-stdlib",
  "move-symbol-pool",
+ "move-table-extension",
  "move-vm-runtime",
  "move-vm-types",
  "net",

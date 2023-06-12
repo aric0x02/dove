@@ -74,7 +74,8 @@ fn store_transaction(
     if tx_file.exists() {
         fs::remove_file(&tx_file)?;
     }
-    println!("Store transaction: {:?}", tx_file);
+    // println!("Store transaction: {:?}", tx_file);
+    // println!("Print  transaction {:?} hex bytes: 0x{}", tx_file, hex::encode(bcs::to_bytes(&tx)?));
     fs::write(&tx_file, bcs::to_bytes(&tx)?)?;
 
     Ok(tx_file)
